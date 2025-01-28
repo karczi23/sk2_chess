@@ -189,7 +189,6 @@ void send_board(int socket, ChessGame *game)
         }
         buffer[pos++] = '\n';
     }
-    printf(buffer);
     send(socket, buffer, strlen(buffer), 0);
 }
 
