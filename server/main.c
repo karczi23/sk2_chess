@@ -214,7 +214,6 @@ int verify_move(int socket, ChessGame *game, Move *move)
     if (move->from_col < 0 || move->from_col > 7 || move->from_row < 0 || move->from_row > 7 ||
         move->to_col < 0 || move->to_col > 7 || move->to_row < 0 || move->to_row > 7)
     {
-        // send(socket, "Invalid move coordinates!\n", 25, 0);
         send_error(socket, "Invalid move coordinates!");
         return 0;
     }
@@ -230,7 +229,6 @@ int verify_move(int socket, ChessGame *game, Move *move)
 
     if (piece == '.')
     {
-        // send(socket, "You have to move an existing piece!\n", 35, 0);
         send_error(socket, "You have to move an existing piece!");
         return 0;
     }
@@ -240,14 +238,12 @@ int verify_move(int socket, ChessGame *game, Move *move)
     // check if player white moves black pieces
     if (is_player1 && piece > 96)
     {
-        // send(socket, "You can't move black's pieces!\n", 30, 0);
         send_error(socket, "You can't move black's pieces!");
         return 0;
     }
 
     if (!is_player1 && piece < 96)
     {
-        // send(socket, "You can't move white's pieces!\n", 30, 0);
         send_error(socket, "You can't move white's pieces!");
         return 0;
     }
@@ -261,7 +257,6 @@ int verify_move(int socket, ChessGame *game, Move *move)
 
     if (!check_validity(tolower(lower_piece), move))
     {
-        // send(socket, "This move cannot be played by this piece!\n", 41, 0);
         send_error(socket, "This move cannot be played by this piece!");
         return 0;
     }
@@ -312,18 +307,14 @@ int handle_move(int socket, GameManager *gm, char *move)
     if ((is_player1 && game->current_player != 1) ||
         (!is_player1 && game->current_player != 2))
     {
-        // send(socket, "Not your turn!\n", 14, 0);
         send_error(socket, "Not your turn!");
         return 0;
     }
 
     // Basic move validation (example: "a2a4")
-    // sprintf(buffer, "move length: %ld, move: %s", strlen(move), move);
-    // send(socket, buffer, strlen(buffer), 0);
     printf("%s\n", move);
     if (strlen(move) != 4)
     {
-        // send(socket, "Invalid move format! Use format: a2a4\n", 37, 0);
         send_error(socket, "Invalid move format! Use format: a2a4");
         return 0;
     }
@@ -331,15 +322,12 @@ int handle_move(int socket, GameManager *gm, char *move)
     // Basic boundary check
     if (!verify_move(socket, game, &move_obj))
     {
-        // send(socket, "This move is illegal \n", 21, 0);
         send_error(socket, "This move is illegal");
         return 0;
     };
 
     printf("before: %c, after: %c\n", game->board[move_obj.from_row][move_obj.from_col], game->board[move_obj.to_row][move_obj.to_col]);
     // Make the move
-    // game->board[move_obj.to_row][move_obj.to_col] = game->board[move_obj.from_row][move_obj.from_col];
-    // game->board[move_obj.from_row][move_obj.from_col] = '.';
     move_king(game, &move_obj);
 
     char piece_taken = apply_move(&move_obj, game->board);
@@ -349,7 +337,6 @@ int handle_move(int socket, GameManager *gm, char *move)
     if (piece_taken != '.' && is_player1 != is_piece_taken_black)
     {
         revert_move(&move_obj, game->board, piece_taken);
-        // send(socket, "You can't take your own pieces!\n", 33, 0);
         send_error(socket, "You can't take your own pieces!");
         return 0;
     }
@@ -428,6 +415,7 @@ int main(int argc, char **argv)
     global_game_manager = &game_manager;
 
     // Set up signal handlers
+    // there are used to gracefully shutdown server using Ctrl+C
     struct sigaction sa;
     sa.sa_handler = handle_shutdown;
     sigemptyset(&sa.sa_mask);
