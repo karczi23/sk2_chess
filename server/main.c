@@ -385,8 +385,6 @@ void parse_args(int argc, char **argv)
         printf("usage: %s -p PORT\n", argv[0]);
         printf("OPTIONS\n");
         printf("  -p --port    PORT\n");
-        printf("  --game-time  SECONDS\n");
-        printf("  --increment SECONDS\n");
         exit(1);
     }
 
