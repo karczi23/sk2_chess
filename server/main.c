@@ -11,7 +11,7 @@
 #include <ctype.h>
 #include "utils.h"
 
-#define PORT 8080
+#define PORT 4567
 #define BUFFER_SIZE 1024
 
 int port, game_time, increment;
