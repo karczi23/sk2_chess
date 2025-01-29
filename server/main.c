@@ -283,9 +283,9 @@ void finish_game(ChessGame *game, int winner)
     game->is_active = 0;
     int winner_socket = winner ? game->player1_socket : game->player2_socket;
     int loser_socket = winner ? game->player2_socket : game->player1_socket;
-    send(winner_socket, "You win! Game over.\n", 21, 0);
+    send(winner_socket, "x You win! Game over.\n", 23, 0);
     close(winner_socket);
-    send(loser_socket, "You lost. Game over.\n", 22, 0);
+    send(loser_socket, "x You lost. Game over.\n", 24, 0);
     close(loser_socket);
 }
 

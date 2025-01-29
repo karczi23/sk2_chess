@@ -280,6 +280,15 @@ int can_be_taken(ChessGame *game, Move *move, int isPlayerWhite)
     return diag || straight || knight;
 }
 
+int get_step(int a, int b)
+{
+    if (b > a)
+        return 1;
+    if (b < a)
+        return -1;
+    return 0;
+}
+
 int can_be_blocked(ChessGame *game, Move *move, int isPlayerWhite)
 {
     Tile tile = isPlayerWhite ? game->white_king : game->black_king;
@@ -287,15 +296,25 @@ int can_be_blocked(ChessGame *game, Move *move, int isPlayerWhite)
     attacking_tile.col = move->to_col;
     attacking_tile.row = move->to_row;
 
-    for (
-        int i = MIN(tile.col, attacking_tile.col) + 1,
-            j = MIN(tile.row, attacking_tile.row) + 1;
-        i < MAX(tile.col, attacking_tile.col) && j < MAX(tile.row, attacking_tile.row);
-        i++, j++)
+    int x_step = get_step(attacking_tile.row, tile.row);
+    int y_step = get_step(attacking_tile.col, tile.col);
+
+    int current_x = attacking_tile.row;
+    int current_y = attacking_tile.col;
+
+    while (current_x != tile.row || current_y != tile.col)
     {
+        current_x += x_step;
+        current_y += y_step;
+
+        if (current_x == tile.row && current_y == tile.col)
+        {
+            return 0;
+        }
+        // printf("(%d,%d) ", current_x, current_y);
         Tile new_tile;
-        new_tile.col = i;
-        new_tile.row = j;
+        new_tile.col = current_y;
+        new_tile.row = current_x;
         int diag = check_diagonals(game->board, &new_tile, !isPlayerWhite);
 
         int straight = check_straights(game->board, &new_tile, !isPlayerWhite);
